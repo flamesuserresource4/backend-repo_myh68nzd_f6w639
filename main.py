@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 from database import db, create_document, get_documents
 
@@ -33,7 +33,7 @@ class ClassOut(BaseModel):
     title: str
     subtitle: Optional[str] = None
     description: Optional[str] = None
-    highlights: List[str] = []
+    highlights: List[str] = Field(default_factory=list)
 
 @app.get("/")
 def read_root():
@@ -127,7 +127,6 @@ def test_database():
     except Exception as e:
         response["database"] = f"❌ Error: {str(e)[:50]}"
 
-    import os
     response["database_url"] = "✅ Set" if os.getenv("DATABASE_URL") else "❌ Not Set"
     response["database_name"] = "✅ Set" if os.getenv("DATABASE_NAME") else "❌ Not Set"
 
