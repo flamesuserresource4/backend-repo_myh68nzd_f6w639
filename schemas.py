@@ -12,7 +12,7 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 # Example schemas (replace with your own):
 
@@ -38,11 +38,35 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# SAT Prep app schemas
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Satclass(BaseModel):
+    """
+    SAT class/course details
+    Collection name: "satclass"
+    """
+    title: str = Field(..., description="Course title")
+    subtitle: Optional[str] = Field(None, description="Short tagline/subtitle")
+    description: Optional[str] = Field(None, description="Overview description")
+    highlights: List[str] = Field(default_factory=list, description="Key highlights")
+
+class Plan(BaseModel):
+    """
+    Pricing plan for the SAT class
+    Collection name: "plan"
+    """
+    name: str = Field(..., description="Plan name")
+    price: float = Field(..., ge=0, description="Price in USD")
+    frequency: str = Field(..., description="Billing frequency, e.g., per course, per month")
+    features: List[str] = Field(default_factory=list, description="Included features")
+    popular: bool = Field(False, description="Whether this is a popular plan")
+
+class Review(BaseModel):
+    """
+    Reviews from students/parents
+    Collection name: "review"
+    """
+    name: str = Field(..., description="Reviewer name")
+    rating: int = Field(..., ge=1, le=5, description="Rating 1-5")
+    comment: str = Field(..., description="Review text")
+    role: Optional[str] = Field(None, description="Student/Parent/Teacher")
